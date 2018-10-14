@@ -1,7 +1,7 @@
 {
   "name": "Letterboxd IMDb Trivia",
   "version": "1.0",
-  "description": "Show IMDb trivia on letterboxd movie pages.",
+  "description": "Shows IMDb trivia on letterboxd movie pages.",
   "content_scripts": [
     {
       "js": ["js/jquery-3.3.1.min.js", "js/content.js"],
