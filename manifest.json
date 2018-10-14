@@ -1,0 +1,17 @@
+{
+    "name": "lb-imdb",
+    "version": "1.0",
+    "description": "Show IMDb trivia on letterboxd movie pages.",
+    "content_scripts": [
+      {
+        "js": ["jquery-3.3.1.min.js", "content.js"],
+        "css" : ["styles.css"],
+        "matches" : ["https://letterboxd.com/film/*"],
+        "run_at" : "document_end"
+      }
+    ],
+    "permissions": [
+      "tabs", "https://letterboxd.com/film/*", "https://www.imdb.com/*"
+    ],
+    "manifest_version": 2
+  }
