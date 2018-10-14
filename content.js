@@ -6,7 +6,6 @@ if (typeof imdbLink !== 'undefined') {
     var arr = rx.exec(imdbLink);
     var imdbCode = arr[1];
     if (typeof imdbCode !== 'undefined') {
-
         getTrivia(imdbCode, function(trivia) {
             if (trivia.length > 0) {
                 insertTrivia(trivia);
@@ -23,12 +22,12 @@ if (typeof imdbLink !== 'undefined') {
 function getTrivia(imdbCode, done) {
     var trivia = [];
     var imdbTriviaURL = imdbBase + "/title/" + imdbCode + "/trivia";
+
     $.get(imdbTriviaURL, function(data) {
         var $triviaEls = $(data).find('#trivia_content .list > div');
-        $triviaEls.each(function() {
-            
-            var html = $(this).find('.sodatext').html();
-            
+
+        $triviaEls.each(function() {            
+            var html = $(this).find('.sodatext').html();            
             if (typeof html !== 'undefined') {
                 // add domain to internal links            
                 html = $.trim(html.replace('<a href="/', '<a target="_blank" href="' + imdbBase, html));
@@ -53,7 +52,6 @@ function insertTrivia(trivia) {
     // omit "/trivia" from basepath, since letterboxd server doesn't know it
     var $newTab = $('<li><a href="'+basePath+'" data-id="trivia">Trivia</a></li>');
     $newTab.appendTo($tabsListWrap);
-
     
     var triviaHTML = '';
     for (var i = 0, l = trivia.length; i < l; i++) {
@@ -67,8 +65,5 @@ function insertTrivia(trivia) {
     var script = document.createElement('script');
     var code = document.createTextNode('(function() {' + customJS + '})();');
     script.appendChild(code);
-    (document.body || document.head).appendChild(script);
-
-
-       
+    (document.body || document.head).appendChild(script);      
 }
