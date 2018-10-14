@@ -29,8 +29,9 @@ function getTrivia(imdbCode, done) {
         $triviaEls.each(function() {            
             var html = $(this).find('.sodatext').html();            
             if (typeof html !== 'undefined') {
-                // add domain to internal links            
-                html = $.trim(html.replace('<a href="/', '<a target="_blank" href="' + imdbBase, html));
+                
+                // add domain to internal links                            
+                html = $.trim(html.replace(/<a href="\//g, '<a target="_blank" href="' + imdbBase, html));                
                 trivia.push(html);               
             }            
         });
@@ -41,6 +42,10 @@ function getTrivia(imdbCode, done) {
     });     
 }
 
+/**
+ * Insert trivia as tabbed content.
+ * @param {array} trivia 
+ */
 function insertTrivia(trivia) {
     var $tabsWrap = $('.col-main #tabbed-content');
     var $tabsListWrap = $tabsWrap.find("header ul");
