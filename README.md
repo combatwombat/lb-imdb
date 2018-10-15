@@ -1,3 +1,3 @@
 # Letterboxd IMDb Trivia
 
-Adds IMDb trivia to a letterboxd movie page.
+Chrome and Firefox extension to add IMDb trivia to a letterboxd movie page.
