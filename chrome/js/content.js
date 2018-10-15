@@ -66,7 +66,7 @@ function insertTrivia(trivia) {
     $newTabContent.appendTo($tabsWrap);
 
     // re-init letterboxd js to recognize new tab
-    var customJS = 'Bxd().init();';
+    var customJS = 'Bxd().tabbedContent();';
     var script = document.createElement('script');
     var code = document.createTextNode('(function() {' + customJS + '})();');
     script.appendChild(code);
