@@ -30,8 +30,15 @@ function getTrivia(imdbCode, done) {
             var html = $(this).find('.sodatext').html();            
             if (typeof html !== 'undefined') {
                 
-                // add domain to internal links                            
-                html = $.trim(html.replace(/<a href="\//g, '<a target="_blank" href="' + imdbBase, html));                
+                // replace  IMDb links with letterboxd search links
+                var $html = $('<span>' + html + '</span>');
+                $html.find('a').each(function() {
+                    var $this = $(this);
+                    var linkText = $this.text();
+                    $this.attr('href', 'https://letterboxd.com/search/' + encodeURIComponent(linkText));
+                })
+
+                html = $html.html();             
                 trivia.push(html);               
             }            
         });
