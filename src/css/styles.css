@@ -9,3 +9,6 @@
 #tab-trivia ul li:last-child {
     border-bottom: none;
 }
+#tab-trivia ul li a {
+    color: #40bcf4;
+}
