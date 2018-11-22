@@ -10,6 +10,9 @@
     border-bottom: none;
 }
 #tab-trivia ul li a {
+    color: #fff;
+}
+#tab-trivia ul li a:hover {
     color: #40bcf4;
 }
 #tab-trivia .trivia-list h4 {
