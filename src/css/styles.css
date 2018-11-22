@@ -12,3 +12,15 @@
 #tab-trivia ul li a {
     color: #40bcf4;
 }
+#tab-trivia .trivia-list h4 {
+    color: #9ab;
+    margin: 20px 0 10px 0;
+    padding: 5px 0;
+    border-bottom: 1px solid #456;    
+    text-transform: uppercase;
+}
+
+#tab-trivia .trivia-list.spoiler h4 {
+    color: #ee7000;
+    border-color: #ee7000;
+}

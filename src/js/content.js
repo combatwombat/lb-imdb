@@ -7,7 +7,7 @@ if (typeof imdbLink !== 'undefined') {
     var imdbCode = arr[1];
     if (typeof imdbCode !== 'undefined') {
         getTrivia(imdbCode, function(trivia) {
-            if (trivia.length > 0) {
+            if (trivia.length > 0 && trivia[0].items.length > 0) {
                 insertTrivia(trivia);
             }            
         });        
@@ -15,7 +15,8 @@ if (typeof imdbLink !== 'undefined') {
 }
 
 /**
- * Get array of trivia html
+ * Get array of trivia html, grouped by section
+ * [{'items' => [...]}, {'title' => 'Cameo', 'items' => [...]}]
  * @param {string} imdbCode 
  * @param {function} done 
  */
@@ -24,23 +25,40 @@ function getTrivia(imdbCode, done) {
     var imdbTriviaURL = imdbBase + "/title/" + imdbCode + "/trivia";
 
     $.get(imdbTriviaURL, function(data) {
-        var $triviaEls = $(data).find('#trivia_content .list > div');
+        var $triviaLists = $(data).find('#trivia_content .list');
 
-        $triviaEls.each(function() {            
-            var html = $(this).find('.sodatext').html();            
-            if (typeof html !== 'undefined') {
-                
-                // replace  IMDb links with letterboxd search links
-                var $html = $('<span>' + html + '</span>');
-                $html.find('a').each(function() {
-                    var $this = $(this);
-                    var linkText = $this.text();
-                    $this.attr('href', 'https://letterboxd.com/search/' + encodeURIComponent(linkText));
-                })
+        $triviaLists.each(function() {
+            var $this = $(this);
+            var $header = $this.find('> h4.li_group');
+            
+            var title = '';
+            if ($header.length) {
+                title = $header.text();
+            }
 
-                html = $html.html();             
-                trivia.push(html);               
-            }            
+            var triviaList = {
+                'title': title,
+                'items': []
+            }
+
+            var $triviaEls = $this.find('> div.soda');
+            $triviaEls.each(function() {            
+                var html = $(this).find('.sodatext').html();            
+                if (typeof html !== 'undefined') {
+                    
+                    // replace  IMDb links with letterboxd search links
+                    var $html = $('<span>' + html + '</span>');
+                    $html.find('a').each(function() {
+                        var $this = $(this);
+                        var linkText = $this.text();
+                        $this.attr('href', 'https://letterboxd.com/search/' + encodeURIComponent(linkText));
+                    })
+    
+                    html = $html.html();             
+                    triviaList.items.push(html);               
+                }            
+            });
+            trivia.push(triviaList);
         });
         done(trivia);
 
@@ -54,6 +72,7 @@ function getTrivia(imdbCode, done) {
  * @param {array} trivia 
  */
 function insertTrivia(trivia) {
+
     var $tabsWrap = $('.col-main #tabbed-content');
     var $tabsListWrap = $tabsWrap.find("header ul");
 
@@ -67,9 +86,31 @@ function insertTrivia(trivia) {
     
     var triviaHTML = '';
     for (var i = 0, l = trivia.length; i < l; i++) {
-        triviaHTML += '<li>' + trivia[i] + '</li>';
+        
+        var cssClass = '';
+        if (trivia[i].title.startsWith("Spoiler")) {
+            cssClass = ' spoiler';
+        }
+
+        triviaHTML += '<div class="trivia-list' + cssClass + '">';
+
+        if (trivia[i].title.length) {
+            triviaHTML += '<h4>' + trivia[i].title + '</h4>';
+            
+        }
+        if (trivia[i].items.length) {
+            triviaHTML += '<ul>';
+            for (var j = 0, l2 = trivia[i].items.length; j < l2; j++) {
+                triviaHTML += '<li>' + trivia[i].items[j] + '</li>';
+            }
+            triviaHTML += '</ul>';
+        }
+
+        triviaHTML += '</div>';
     }
-    var $newTabContent = $('<div id="tab-trivia" class="tabbed-content-block" style="display: none;"><ul>' + triviaHTML + '</ul></div>');
+    
+
+    var $newTabContent = $('<div id="tab-trivia" class="tabbed-content-block" style="display: none;">' + triviaHTML + '</div>');
     $newTabContent.appendTo($tabsWrap);
 
     // re-init letterboxd js to recognize new tab
