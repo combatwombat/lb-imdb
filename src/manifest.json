@@ -10,6 +10,10 @@
       "run_at" : "document_end"
     }
   ],
+  "background": {
+    "scripts": ["js/background.js"],
+    "persistent": false
+  },
   "permissions": [
     "tabs", "https://letterboxd.com/film/*", "https://www.imdb.com/*"
   ],

@@ -1,16 +1,28 @@
-var imdbBase = "https://www.imdb.com/";
+var isChrome = typeof chrome !== undefined; // chrome or firefox?
 
 var imdbLink = $('a[data-track-action="IMDb"]').attr('href');
+
 if (typeof imdbLink !== 'undefined') {
     var rx = /title\/(.*)\/maindetails/g;
     var arr = rx.exec(imdbLink);
     var imdbCode = arr[1];
     if (typeof imdbCode !== 'undefined') {
-        getTrivia(imdbCode, function(trivia) {
-            if (trivia.length > 0 && trivia[0].items.length > 0) {
-                insertTrivia(trivia);
-            }            
-        });        
+
+        if (isChrome) {
+            chrome.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBHTML);
+        } else {
+            browser.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBHTML);
+        }
+     
+    }
+}
+
+function gotIMDBHTML(html) {
+    if (html !== false) {
+        var trivia = getTriviaFromHTML(html);
+        if (trivia.length > 0 && trivia[0].items.length > 0) {
+            insertTrivia(trivia);
+        } 
     }
 }
 
@@ -20,52 +32,49 @@ if (typeof imdbLink !== 'undefined') {
  * @param {string} imdbCode 
  * @param {function} done 
  */
-function getTrivia(imdbCode, done) {
+function getTriviaFromHTML(imdbHTML, done) {
     var trivia = [];
-    var imdbTriviaURL = imdbBase + "/title/" + imdbCode + "/trivia";
 
-    $.get(imdbTriviaURL, function(data) {
-        var $triviaLists = $(data).find('#trivia_content .list');
+    var $triviaLists = $(imdbHTML).find('#trivia_content .list');
 
-        $triviaLists.each(function() {
-            var $this = $(this);
-            var $header = $this.find('> h4.li_group');
-            
-            var title = '';
-            if ($header.length) {
-                title = $header.text();
-            }
+    $triviaLists.each(function() {
+        var $this = $(this);
+        var $header = $this.find('> h4.li_group');
+        
+        var title = '';
+        if ($header.length) {
+            title = $header.text();
+        }
 
-            var triviaList = {
-                'title': title,
-                'items': []
-            }
+        var triviaList = {
+            'title': title,
+            'items': []
+        }
 
-            var $triviaEls = $this.find('> div.soda');
-            $triviaEls.each(function() {            
-                var html = $(this).find('.sodatext').html();            
-                if (typeof html !== 'undefined') {
-                    
-                    // replace  IMDb links with letterboxd search links
-                    var $html = $('<span>' + html + '</span>');
-                    $html.find('a').each(function() {
-                        var $this = $(this);
-                        var linkText = $this.text();
-                        $this.attr('href', 'https://letterboxd.com/search/' + encodeURIComponent(linkText));
-                    })
-    
-                    html = $html.html();             
-                    triviaList.items.push(html);               
-                }            
-            });
-            trivia.push(triviaList);
+        var $triviaEls = $this.find('> div.soda');
+        $triviaEls.each(function() {            
+            var html = $(this).find('.sodatext').html();            
+            if (typeof html !== 'undefined') {
+                
+                // replace  IMDb links with letterboxd search links
+                var $html = $('<span>' + html + '</span>');
+                $html.find('a').each(function() {
+                    var $this = $(this);
+                    var linkText = $this.text();
+                    $this.attr('href', 'https://letterboxd.com/search/' + encodeURIComponent(linkText));
+                })
+
+                html = $html.html();             
+                triviaList.items.push(html);               
+            }            
         });
-        done(trivia);
-
-    }).fail(function() {
-        done(trivia);
-    });     
+        trivia.push(triviaList);
+    });
+    return trivia;
+        
 }
+
+
 
 /**
  * Insert trivia as tabbed content.
