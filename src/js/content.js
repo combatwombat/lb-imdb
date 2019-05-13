@@ -1,5 +1,3 @@
-var isChrome = typeof chrome !== undefined; // chrome or firefox?
-
 var imdbLink = $('a[data-track-action="IMDb"]').attr('href');
 
 if (typeof imdbLink !== 'undefined') {
@@ -7,13 +5,7 @@ if (typeof imdbLink !== 'undefined') {
     var arr = rx.exec(imdbLink);
     var imdbCode = arr[1];
     if (typeof imdbCode !== 'undefined') {
-
-        if (isChrome) {
-            chrome.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBHTML);
-        } else {
-            browser.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBHTML);
-        }
-     
+        chrome.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBHTML);
     }
 }
 
