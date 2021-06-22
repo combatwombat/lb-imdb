@@ -53,7 +53,17 @@ function getTriviaFromHTML(imdbHTML, done) {
                 $html.find('a').each(function() {
                     var $this = $(this);
                     var linkText = $this.text();
-                    $this.attr('href', 'https://letterboxd.com/search/' + encodeURIComponent(linkText));
+                    let uri = $this.attr("href");
+                    var movieRegex = new RegExp('^\/title\/tt[^\/]+$');
+
+                    // if the given link is a movie page go the the letterboxd equivalent movie page
+                    if (movieRegex.test(uri)) {
+                        var imdbID = uri.split('/').reverse()[0];
+                        $this.attr('href', 'https://letterboxd.com/imdb/' + imdbID);
+                    }
+                    else {
+                        $this.attr('href', 'https://letterboxd.com/search/' + encodeURIComponent(linkText));
+                    }
                 })
 
                 html = $html.html();
