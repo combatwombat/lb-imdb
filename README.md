@@ -11,7 +11,7 @@ Chrome and Firefox extension to add IMDb trivia to a letterboxd movie page.
 
 `src/shared` contains the main code. `src/chrome` and `src/firefox` have browser-specific files that overwrite the ones in `shared` at the build step.
 
-To build both versions, run the `./build.sh` Bash script in the main folder. `dist/chrome/src` then contains the extension for that browser, `lb-imdb.zip` is that folder zipped for distribution in the Web and Add-on stores.
+To build both versions, run the `./build.sh` Bash script in the main folder. `dist/chrome/src` then contains the extension for that browser, `lb-imdb.zip` is that folder zipped for distribution in the Web- and Add-on stores.
 
 To test the extension in chrome, [enable developer mode](https://developer.chrome.com/docs/extensions/mv3/faq/) and load the `dist/chrome/src` folder.
 
