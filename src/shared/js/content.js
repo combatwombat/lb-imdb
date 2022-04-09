@@ -76,6 +76,20 @@ function getTriviaFromHTML(imdbHTML, done) {
 
 }
 
+// thx to stackbykumbi https://stackoverflow.com/a/69361046/1191375
+function nullthrows(v) {
+    if (v == null) throw new Error("it's a null");
+    return v;
+}
+
+function injectCode(src) {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = function() {
+        this.remove();
+    };
+    nullthrows(document.head || document.documentElement).appendChild(script);
+}
 
 
 /**
@@ -125,9 +139,13 @@ function insertTrivia(trivia) {
     $newTabContent.appendTo($tabsWrap);
 
     // re-init letterboxd js to recognize new tab
+    injectCode(chrome.runtime.getURL('/js/reload-letterboxd.js'));
+
+    /*
     var customJS = 'Bxd().tabbedContent();';
     var script = document.createElement('script');
     var code = document.createTextNode('(function() {' + customJS + '})();');
     script.appendChild(code);
     (document.body || document.head).appendChild(script);
+    */
 }
