@@ -20,7 +20,7 @@
     "service_worker": "js/background.js"
   },
   "permissions": [
-    "webRequest"
+    
   ],
   "host_permissions": [
     "https://letterboxd.com/film/*", "https://www.imdb.com/*"
