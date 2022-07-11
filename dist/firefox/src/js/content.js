@@ -1,13 +1,23 @@
-var imdbLink = $('a[data-track-action="IMDb"]').attr('href');
+var options = {};
+chrome.storage.sync.get(null, function(op) {
+    options = op;
+    init();
+});
 
-if (typeof imdbLink !== 'undefined') {
-    var rx = /title\/(.*)\/maindetails/g;
-    var arr = rx.exec(imdbLink);
-    var imdbCode = arr[1];
-    if (typeof imdbCode !== 'undefined') {
-        chrome.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBHTML);
+function init() {
+    var imdbLink = $('a[data-track-action="IMDb"]').attr('href');
+
+    if (typeof imdbLink !== 'undefined') {
+        var rx = /title\/(.*)\/maindetails/g;
+        var arr = rx.exec(imdbLink);
+        var imdbCode = arr[1];
+        if (typeof imdbCode !== 'undefined') {
+            chrome.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBHTML);
+        }
     }
 }
+
+
 
 function gotIMDBHTML(html) {
     if (html !== false) {
@@ -121,8 +131,11 @@ function insertTrivia(trivia) {
 
         if (trivia[i].title.length) {
             triviaHTML += '<h4>' + trivia[i].title + '</h4>';
-
         }
+
+        //triviaHTML += (options.hideSpoilers ? "Hide Spoilers" : "Show Spoilers") + " blalalalalallalalal";
+
+
         if (trivia[i].items.length) {
             triviaHTML += '<ul>';
             for (var j = 0, l2 = trivia[i].items.length; j < l2; j++) {

@@ -1,0 +1,41 @@
+body {
+    padding: 40px;
+}
+
+
+
+.option-checkbox {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+.option-checkbox > .col {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.option-checkbox > .col.col-left {
+    width: 34px;
+}
+
+.option-checkbox > .col.col-right {
+    padding-top: 3px;
+    font-size: 16px;
+}
+
+.option-checkbox input[type="checkbox"] {
+    -webkit-appearance: none;
+    width: 19px;
+    height: 19px;
+    border: 2px solid #eee;
+    background: transparent;
+}
+
+
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #222;
+        color: #eee;
+    }
+}
