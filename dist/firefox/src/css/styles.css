@@ -1,29 +1,59 @@
 #tab-trivia ul li {
-    border-bottom: 1px solid #2c3641;
-    padding-bottom: 10px;
-    margin-top: 10px;
+  border-bottom: 1px solid #2c3641;
+  padding-bottom: 10px;
+  margin-top: 10px;
 }
+
 #tab-trivia ul li:first-child {
-    margin-top: 0;
+  margin-top: 0;
 }
+
 #tab-trivia ul li:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
+
 #tab-trivia ul li a {
-    color: #fff;
+  color: #fff;
 }
+
 #tab-trivia ul li a:hover {
-    color: #40bcf4;
+  color: #40bcf4;
 }
 #tab-trivia .trivia-list h4 {
-    color: #9ab;
-    margin: 20px 0 10px 0;
-    padding: 5px 0;
-    border-bottom: 1px solid #456;    
-    text-transform: uppercase;
+  color: #9ab;
+  margin: 20px 0 10px 0;
+  padding: 5px 0;
+  border-bottom: 1px solid #456;
+  text-transform: uppercase;
 }
 
 #tab-trivia .trivia-list.spoiler h4 {
-    color: #ee7000;
-    border-color: #ee7000;
+  color: #ee7000;
+  border-color: #ee7000;
+}
+
+#tab-trivia .trivia-list.spoiler #show-spoilers-span {
+  font-size: 15px;
+  font-style: italic;
+}
+
+#tab-trivia .trivia-list.spoiler-show #show-spoilers-span {
+  display: none;
+}
+
+#tab-trivia .trivia-list.spoiler h4 {
+  color: #ee7000;
+  border-color: #ee7000;
+}
+
+#tab-trivia .trivia-list.spoiler span .spoiler-reveal {
+  color: #def;
+}
+
+#tab-trivia .trivia-list.spoiler ul {
+  display: none;
+}
+
+#tab-trivia .trivia-list.spoiler-show ul {
+  display: block;
 }
