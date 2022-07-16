@@ -27,3 +27,82 @@
     color: #ee7000;
     border-color: #ee7000;
 }
+
+#tab-trivia .trivia-list.hidden-list ul {
+    display: none;
+}
+
+#tab-trivia .trivia-list .show-hidden-list {
+    display: none;
+}
+#tab-trivia .trivia-list.hidden-list .show-hidden-list {
+    display: block;
+}
+/*
+#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col {
+    display: table-cell;
+    vertical-align: top;
+}
+#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-left {
+    width: 160px;
+}
+
+#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right input {
+    display: inline-block;
+}
+#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right label {
+    color: #9ab;
+    display: inline-block;
+}
+#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right label a {
+    color: #fff;
+}
+#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right input[type="checkbox"] {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #9ab;
+    background: transparent;
+    border-radius: 3px;
+}
+#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right input[type="checkbox"]:checked {
+    background: #9ab url(data:image/svg+xml;utf8,<svg width='12' height='11' viewBox='0 0 12 11' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M1 5.19048L4.75 9L11 1' stroke='#222' stroke-width='2'/></svg>) no-repeat 3px 4px;
+}*/
+
+
+
+#tab-trivia .trivia-list.hidden-list .show-hidden-list .show-hidden-list-link {
+    display: inline-block;
+    background: #283038;
+    border-radius: 3px;
+    color: #89a;
+    font-size: 12px;
+    letter-spacing: 1px;
+    line-height: 1;
+    padding: 10px 10px;
+    text-transform: uppercase;
+}
+#tab-trivia .trivia-list.hidden-list .show-hidden-list .show-hidden-list-link:hover {
+    background: #fff;
+    color: #567;
+}
+
+.lb-imdb-info {
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top: 1px solid rgb(44, 54, 65);
+    font-style: italic;
+}
+.trivia-list:not(.hidden-list) .if-not-hidden-list,
+.trivia-list.hidden-list .if-hidden-list {
+    display: inline-block;
+}
+.trivia-list:not(.hidden-list) .if-hidden-list,
+.trivia-list.hidden-list .if-not-hidden-list {
+    display: none;
+}
+
+.lb-imdb-info .open-lb-imdb-options {
+    color: #fff;
+}

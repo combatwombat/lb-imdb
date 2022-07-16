@@ -1,0 +1,14 @@
+/* dark mode */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: var(--color-bg-dark);
+        color: var(--color-text-dark);
+    }
+    .option-checkbox input[type="checkbox"] {
+        border-color: var(--color-text-dark);
+    }
+    .option-checkbox input[type="checkbox"]:checked {
+        background-color: var(--color-text-dark);
+        background-image: url(../img/checkbox-dark.svg);
+    }
+}

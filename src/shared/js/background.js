@@ -1,4 +1,8 @@
-chrome.runtime.onMessage.addListener(
+if (typeof browser === 'undefined') {
+    browser = chrome;
+}
+
+browser.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (typeof request.imdbCode !== 'undefined') {
             getIMDBHTML(request.imdbCode, sendResponse);
@@ -14,6 +18,18 @@ function getIMDBHTML(imdbCode, callback) {
     .then(response => response.text())
     .then(data => callback(data))
     .catch((error) => callback(false));
-    
 }
 
+browser.runtime.onMessage.addListener(function(message) {
+    switch (message.action) {
+        case "openOptionsPage":
+            openOptionsPage();
+            break;
+        default:
+            break;
+    }
+});
+
+function openOptionsPage() {
+    browser.runtime.openOptionsPage();
+}
