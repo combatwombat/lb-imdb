@@ -1,7 +1,7 @@
 var options = {};
 
 if (typeof browser === 'undefined') {
-    browser = chrome;
+    var browser = chrome;
 }
 
 var defaultOptions = {

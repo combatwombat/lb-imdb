@@ -1,5 +1,5 @@
 if (typeof browser === 'undefined') {
-    browser = chrome;
+    var browser = chrome;
 }
 
 browser.runtime.onMessage.addListener(
