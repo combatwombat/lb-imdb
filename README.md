@@ -16,3 +16,7 @@ To build both versions, run the `./build.sh` Bash script in the main folder. `di
 To test the extension in chrome, [enable developer mode](https://developer.chrome.com/docs/extensions/mv3/faq/) and load the `dist/chrome/src` folder.
 
 In Firefox, [load the temporary Add-on in about:debugging](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension).
+
+## thx to
+
+- [1netanel](https://github.com/1netanel) for hidden spoilers suggestion and demo.
