@@ -111,6 +111,25 @@ function injectCode(src) {
     nullthrows(document.head || document.documentElement).appendChild(script);
 }
 
+// only allow links, sanitize href
+function escapeHTML(html) {
+    return filterXSS(html, {
+        whiteList: {
+            a: ['href']
+        },
+        stripIgnoreTag: true,
+        allowCommentTag: false,
+        onTagAttr: function(tag, name, value, isWhiteAttr) {
+            if (tag === 'a' && name === 'href') {
+                if (value.startsWith('https://letterboxd.com')) {
+                    return 'href="' + value + '"';
+                } else {
+                    return 'href="javascript:void(0)"';
+                }
+            }
+        }
+    });
+}
 
 /**
  * Insert trivia as tabbed content.
@@ -143,7 +162,7 @@ function insertTrivia(trivia) {
         triviaHTML += '<div class="trivia-list' + cssClass + '">';
 
         if (trivia[i].title.length) {
-            triviaHTML += '<h4>' + trivia[i].title + '</h4>';
+            triviaHTML += '<h4>' + escapeHTML(trivia[i].title) + '</h4>';
         }
 
         if (trivia[i].items.length) {
@@ -159,7 +178,7 @@ function insertTrivia(trivia) {
 
             triviaHTML += '<ul>';
             for (var j = 0, l2 = trivia[i].items.length; j < l2; j++) {
-                triviaHTML += '<li>' + trivia[i].items[j] + '</li>';
+                triviaHTML += '<li>' + escapeHTML(trivia[i].items[j]) + '</li>';
             }
             triviaHTML += '</ul>';
 
