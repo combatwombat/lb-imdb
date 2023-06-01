@@ -22,78 +22,78 @@ function init() {
         var arr = rx.exec(imdbLink);
         var imdbCode = arr[1];
         if (typeof imdbCode !== 'undefined') {
-            browser.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBHTML);
+            browser.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBData);
         }
     }
 }
 
 
 
-function gotIMDBHTML(html) {
-    if (html !== false) {
-        var trivia = getTriviaFromHTML(html);
-        if (trivia.length > 0 && trivia[0].items.length > 0) {
-            insertTrivia(trivia);
+function gotIMDBData(data) {
+    if (data.nonSpoilerItems.length > 0 || data.spoilerItems.length > 0) {
+        var triviaCategories = getTriviaCategoriesFromData(data);
+        if (triviaCategories.length > 0) {
+            insertTriviaCategories(triviaCategories);
         }
     }
 }
 
 /**
- * Get array of trivia html, grouped by section
- * [{'items' => [...]}, {'title' => 'Cameo', 'items' => [...]}]
+ * Get array of trivia html, grouped by category, with spoilers and non-spoilers
+ * [
+ *  {
+ *     "category": "Uncategorized",
+ *     "spoilerItems": [html, html, html, ...]
+ *     "nonSpoilerItems": [html, html, html, ...]
+ *  },
+ *  {
+ *     "category": "Cameo",
+ *     "spoilerItems": [html, html, html, ...]
+ *     "nonSpoilerItems": [html, html, html, ...]
+ *  },
+ *  ...
+ * ]
  * @param {string} imdbCode
  * @param {function} done
  */
-function getTriviaFromHTML(imdbHTML, done) {
-    var trivia = [];
+function getTriviaCategoriesFromData(data) {
+    let categories = [];
 
-    var $triviaLists = $($.parseHTML(imdbHTML)).find('#trivia_content .list');
+    processItems(data.nonSpoilerItems, 'nonSpoilerItems', categories);
+    processItems(data.spoilerItems, 'spoilerItems', categories);
 
-    $triviaLists.each(function() {
-        var $this = $(this);
-        var $header = $this.find('> h4.li_group');
+    return categories;
+}
 
-        var title = '';
-        if ($header.length) {
-            title = $header.text();
+/**
+ * Extract trivia and categories from data
+ * @param items
+ * @param itemType
+ * @param categories
+ */
+function processItems(items, itemType, categories) {
+    items.forEach(function(item) {
+        let category = item.node.category.text;
+
+        let triviaItem = {
+            'html' : item.node.text.plaidHtml,
+            'usersVoted': item.node.interestScore.usersVoted,
+            'usersInterested': item.node.interestScore.usersInterested
         }
 
-        var triviaList = {
-            'title': title,
-            'items': []
-        }
-
-        var $triviaEls = $this.find('> div.soda');
-        $triviaEls.each(function() {
-            var html = $(this).find('.sodatext').html();
-            if (typeof html !== 'undefined') {
-
-                // replace  IMDb links with letterboxd search links
-                var $html = $('<span>' + html + '</span>');
-                $html.find('a').each(function() {
-                    var $this = $(this);
-                    var linkText = $this.text();
-                    let uri = $this.attr("href");
-                    var movieRegex = new RegExp('^\/title\/tt[^\/]+$');
-
-                    // if the given link is a movie page go the the letterboxd equivalent movie page
-                    if (movieRegex.test(uri)) {
-                        var imdbID = uri.split('/').reverse()[0];
-                        $this.attr('href', 'https://letterboxd.com/imdb/' + imdbID);
-                    }
-                    else {
-                        $this.attr('href', 'https://letterboxd.com/search/' + encodeURIComponent(linkText));
-                    }
-                })
-
-                html = $html.html();
-                triviaList.items.push(html);
+        let existingCategory = categories.find(cat => cat.category === category);
+        if (existingCategory) {
+            if (!Array.isArray(existingCategory[itemType])) {
+                existingCategory[itemType] = [];
             }
-        });
-        trivia.push(triviaList);
+            existingCategory[itemType].push(triviaItem);
+        } else {
+            categories.push({
+                'category': category,
+                [itemType]: [triviaItem]
+            });
+        }
     });
-    return trivia;
-
 }
 
 // thx to stackbykumbi https://stackoverflow.com/a/69361046/1191375
@@ -133,9 +133,9 @@ function escapeHTML(html) {
 
 /**
  * Insert trivia as tabbed content.
- * @param {array} trivia
+ * @param {array} trivia categories
  */
-function insertTrivia(trivia) {
+function insertTriviaCategories(triviaCategories) {
 
     var $tabsWrap = $('.col-main #tabbed-content');
     var $tabsListWrap = $tabsWrap.find("header ul");
@@ -149,52 +149,61 @@ function insertTrivia(trivia) {
     $newTab.appendTo($tabsListWrap);
 
     var triviaHTML = '';
-    for (var i = 0, l = trivia.length; i < l; i++) {
 
-        var cssClass = '';
-        if (trivia[i].title.startsWith("Spoiler")) {
-            cssClass = ' spoiler';
-            if (options.hideSpoilers) {
-                cssClass += " hidden-list";
-            }
+
+    triviaCategories.forEach(function(category) {
+
+        //// non-spoilers
+        if (category.nonSpoilerItems.length === 0) {
+            return;
+        }
+        triviaHTML += '<div class="trivia-list">';
+        if (category.category !== "Uncategorized") {
+            triviaHTML += '<h4>' + escapeHTML(category.category) + '</h4>';
         }
 
-        triviaHTML += '<div class="trivia-list' + cssClass + '">';
-
-        if (trivia[i].title.length) {
-            triviaHTML += '<h4>' + escapeHTML(trivia[i].title) + '</h4>';
-        }
-
-        if (trivia[i].items.length) {
-
-            if (options.hideSpoilers && trivia[i].title.startsWith("Spoiler")) {
-                triviaHTML +=
-                    '<div class="show-hidden-list">' +
-                            '<a class="show-hidden-list-link" href="#">Show ' +
-                                trivia[i].items.length + ' spoiler' + (trivia[i].items.length !== 1 ? 's' : '') +
-                            '</a>' +
-                    '</div>';
-            }
-
-            triviaHTML += '<ul>';
-            for (var j = 0, l2 = trivia[i].items.length; j < l2; j++) {
-                triviaHTML += '<li>' + escapeHTML(trivia[i].items[j]) + '</li>';
-            }
-            triviaHTML += '</ul>';
-
-            if (trivia[i].title.startsWith("Spoiler")) {
-                triviaHTML += '<div class="lb-imdb-info">';
-
-                triviaHTML += '<span class="if-not-hidden-list">Hide spoilers at first?</span>';
-                triviaHTML += '<span class="if-hidden-list">Don\'t hide spoilers?</span>';
-
-                triviaHTML += ' Go to <a href="#" class="open-lb-imdb-options">Letterboxd IMDb Trivia Options</a></div>';
-            }
-
-        }
+        triviaHTML += '<ul>';
+        category.nonSpoilerItems.forEach(function(item) {
+            triviaHTML += '<li>' + escapeHTML(replaceLinks(item.html)) + '</li>';
+        });
+        triviaHTML += '</ul>';
 
         triviaHTML += '</div>';
-    }
+
+        //// spoilers
+        if (category.spoilerItems.length === 0) {
+            return;
+        }
+        cssClass = ' spoiler';
+        if (options.hideSpoilers) {
+            cssClass += " hidden-list";
+        }
+        triviaHTML += '<div class="trivia-list' + cssClass + '">';
+        triviaHTML += '<h4>' + escapeHTML((category.category !== "Uncategorized" ? category.category + " " : "") + "Spoilers") + '</h4>';
+
+        if (options.hideSpoilers) {
+            triviaHTML +=
+                '<div class="show-hidden-list">' +
+                '<a class="show-hidden-list-link" href="#">Show ' +
+                category.spoilerItems.length + ' spoiler' + (category.spoilerItems.length !== 1 ? 's' : '') +
+                '</a>' +
+                '</div>';
+        }
+
+        triviaHTML += '<ul>';
+        category.spoilerItems.forEach(function(item) {
+            triviaHTML += '<li>' + escapeHTML(replaceLinks(item.html)) + '</li>';
+        });
+        triviaHTML += '</ul>';
+
+        triviaHTML += '<div class="lb-imdb-info">';
+        triviaHTML += '<span class="if-not-hidden-list">Hide spoilers at first?</span>';
+        triviaHTML += '<span class="if-hidden-list">Don\'t hide spoilers?</span>';
+        triviaHTML += ' Go to <a href="#" class="open-lb-imdb-options">Letterboxd IMDb Trivia Options</a></div>';
+
+        triviaHTML += '</div>';
+    });
+
 
 
     var $newTabContent = $('<div id="tab-trivia" class="tabbed-content-block" style="display: none;">' + triviaHTML + '</div>');
@@ -205,6 +214,33 @@ function insertTrivia(trivia) {
 
     addTriviaEventListener();
 
+}
+
+/**
+ * Replace IMDb links with letterboxd search links.
+ * @param html
+ */
+function replaceLinks(html) {
+    $html = $('<span>' + html + '</span>');
+
+    $html.find('a').each(function() {
+        var $this = $(this);
+        var linkText = $this.text();
+        let uri = $this.attr("href");
+        var movieRegex = new RegExp('^\/title\/tt[^\/]+(.*)$');
+
+        // if the given link is a movie page go the letterboxd equivalent movie page
+        if (movieRegex.test(uri)) {
+            var imdbID = uri.split('/').reverse()[1];
+            $this.attr('href', 'https://letterboxd.com/imdb/' + imdbID);
+        }
+        else {
+            $this.attr('href', 'https://letterboxd.com/search/' + encodeURIComponent(linkText));
+        }
+        $this.removeAttr('class');
+    })
+
+    return $html.html();
 }
 
 function addTriviaEventListener() {

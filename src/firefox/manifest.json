@@ -1,6 +1,6 @@
 {
   "name": "Letterboxd IMDb Trivia",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Shows IMDb trivia on Letterboxd movie pages.",
   "content_scripts": [
     {
@@ -19,6 +19,7 @@
   "permissions": [
     "https://letterboxd.com/film/*",
     "https://www.imdb.com/*",
+    "https://caching.graphql.imdb.com/*",
     "storage"
   ],
   "icons" : {
