@@ -171,7 +171,7 @@ function insertTriviaCategories(triviaCategories) {
         triviaHTML += '</div>';
 
         //// spoilers
-        if (category.spoilerItems.length === 0) {
+        if (!category.spoilerItems || category.spoilerItems.length === 0) {
             return;
         }
         cssClass = ' spoiler';
