@@ -52,7 +52,7 @@ async function imdbRequest(imdbCode, spoilers = false, pagePointer = null) {
 
     const extensions = {
         "persistedQuery":{
-            "sha256Hash": "f3e1bbb51b853090bd98a4adc39223dc4e866e4f6fd7b749dda57cff66982670",
+            "sha256Hash": "561871d0ce63008cbe3dd992354de5c86c8d5ed362ceb19f768220b52a648bf0",
             "version":1
         }
     }
@@ -71,12 +71,16 @@ async function imdbRequest(imdbCode, spoilers = false, pagePointer = null) {
 
     if (response.ok) {
         const data = await response.json();
-        triviaItems.push(...data.data.title.trivia.edges);
 
-        if (data.data.title.trivia.pageInfo.hasNextPage) {
-            let nextPage = await imdbRequest(imdbCode, spoilers, data.data.title.trivia.pageInfo.endCursor);
-            triviaItems.push(...nextPage);
+        if (typeof data.data !== "undefined") {
+            triviaItems.push(...data.data.title.trivia.edges);
+
+            if (data.data.title.trivia.pageInfo.hasNextPage) {
+                let nextPage = await imdbRequest(imdbCode, spoilers, data.data.title.trivia.pageInfo.endCursor);
+                triviaItems.push(...nextPage);
+            }
         }
+
     }
 
     return triviaItems;

@@ -16,7 +16,6 @@ browser.storage.local.get(null, function(op) {
 
 function init() {
     var imdbLink = $('a[data-track-action="IMDb"]').attr('href');
-
     if (typeof imdbLink !== 'undefined') {
         var rx = /title\/(.*)\/maindetails/g;
         var arr = rx.exec(imdbLink);
@@ -75,8 +74,10 @@ function processItems(items, itemType, categories) {
     items.forEach(function(item) {
         let category = item.node.category.text;
 
+        console.log(item);
+
         let triviaItem = {
-            'html' : item.node.text.plaidHtml,
+            'html' : item.node.displayableArticle.body.plaidHtml,
             'usersVoted': item.node.interestScore.usersVoted,
             'usersInterested': item.node.interestScore.usersInterested
         }
@@ -203,8 +204,6 @@ function insertTriviaCategories(triviaCategories) {
 
         triviaHTML += '</div>';
     });
-
-
 
     var $newTabContent = $('<div id="tab-trivia" class="tabbed-content-block" style="display: none;">' + triviaHTML + '</div>');
     $newTabContent.appendTo($tabsWrap);
