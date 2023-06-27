@@ -74,8 +74,6 @@ function processItems(items, itemType, categories) {
     items.forEach(function(item) {
         let category = item.node.category.text;
 
-        console.log(item);
-
         let triviaItem = {
             'html' : item.node.displayableArticle.body.plaidHtml,
             'usersVoted': item.node.interestScore.usersVoted,
