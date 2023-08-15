@@ -11,7 +11,8 @@
     }
   ],
   "web_accessible_resources": [
-    "js/reload-letterboxd.js"
+    "js/reload-letterboxd.js",
+    "img/*.png"
   ],
   "background": {
     "scripts": ["js/background.js"]

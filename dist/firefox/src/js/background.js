@@ -17,6 +17,7 @@ async function getIMDBData(imdbCode, callback) {
     let spoilerItems = await imdbRequest(imdbCode, true)
 
     let data = {
+        imdbCode: imdbCode,
         nonSpoilerItems: nonSpoilerItems,
         spoilerItems: spoilerItems
     }

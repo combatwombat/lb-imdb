@@ -108,3 +108,24 @@ body #tabbed-content header ul li {
 .lb-imdb-info .open-lb-imdb-options {
     color: #fff;
 }
+
+.lb-imdb-fallback {
+
+}
+.lb-imdb-fallback .lb-imdb-button {
+    background: #283038;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 12px;
+    letter-spacing: 1px;
+    line-height: 1;
+    padding: 10px 10px;
+    text-transform: uppercase;
+}
+.lb-imdb-fallback .lb-imdb-button img {
+    display: inline-block;
+    width: 16px;
+    vertical-align: bottom;
+    margin-left: 5px;
+    transform: translateY(-3px);
+}

@@ -1,6 +1,6 @@
 {
   "name": "Letterboxd IMDb Trivia",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "Shows IMDb trivia on Letterboxd movie pages.",
   "content_scripts": [
     {
@@ -12,7 +12,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": [ "js/reload-letterboxd.js" ],
+      "resources": [ "js/reload-letterboxd.js", "img/*.png" ],
       "matches": [ "https://letterboxd.com/*" ]
     }
   ],

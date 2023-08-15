@@ -12,7 +12,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": [ "js/reload-letterboxd.js" ],
+      "resources": [ "js/reload-letterboxd.js", "img/*.png" ],
       "matches": [ "https://letterboxd.com/*" ]
     }
   ],

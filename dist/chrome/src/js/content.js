@@ -29,11 +29,14 @@ function init() {
 
 
 function gotIMDBData(data) {
+
     if (data.nonSpoilerItems.length > 0 || data.spoilerItems.length > 0) {
         var triviaCategories = getTriviaCategoriesFromData(data);
         if (triviaCategories.length > 0) {
             insertTriviaCategories(triviaCategories);
         }
+    } else {
+        insertFallback(data.imdbCode);
     }
 }
 
@@ -211,6 +214,36 @@ function insertTriviaCategories(triviaCategories) {
 
     addTriviaEventListener();
 
+}
+
+/**
+ * Insert fallback link as tabbed content.
+ * @param string imdbCode
+ */
+function insertFallback(imdbCode) {
+
+    var $tabsWrap = $('.col-main #tabbed-content');
+    var $tabsListWrap = $tabsWrap.find("header ul");
+
+    // get base path to movie
+    var pathArr = window.location.pathname.split("/");
+    var basePath = '/' + pathArr[1] + '/' + pathArr[2] + '/';
+
+    // omit "/trivia" from basepath, since letterboxd server doesn't know it
+    var $newTab = $('<li><a href="'+basePath+'" data-id="trivia">Trivia</a></li>');
+    $newTab.appendTo($tabsListWrap);
+
+    var iconSrc = chrome.runtime.getURL("img/icon-external-link-line-32.png");
+
+    var triviaHTML = '<div class="lb-imdb-fallback"><p><em>Error fetching IMDb trivia. Might be fixed soon. Meanwhile:</em></p><p><a class="lb-imdb-button" href="https://www.imdb.com/title/'+imdbCode+'/trivia" target="_blank">Go to IMDb trivia page <img src="'+iconSrc+'"></a></p></div>';
+
+    var $newTabContent = $('<div id="tab-trivia" class="tabbed-content-block" style="display: none;">' + triviaHTML + '</div>');
+    $newTabContent.appendTo($tabsWrap);
+
+    // re-init letterboxd js to recognize new tab
+    injectCode(browser.runtime.getURL('/js/reload-letterboxd.js'));
+
+    addTriviaEventListener();
 }
 
 /**
