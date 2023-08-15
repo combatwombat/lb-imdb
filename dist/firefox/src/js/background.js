@@ -36,6 +36,7 @@ async function imdbRequest(imdbCode, spoilers = false, pagePointer = null) {
             // "spoilers":"EXCLUDE_SPOILERS" or "SPOILERS_ONLY"
         },
         "first":50,
+        "isAutoTranslationEnabled": false,
         "locale":"en-US",
         "originalTitleText":false
     }
@@ -52,7 +53,7 @@ async function imdbRequest(imdbCode, spoilers = false, pagePointer = null) {
 
     const extensions = {
         "persistedQuery":{
-            "sha256Hash": "561871d0ce63008cbe3dd992354de5c86c8d5ed362ceb19f768220b52a648bf0",
+            "sha256Hash": "101651d4fef546dfc31d45f2bf864f588bf4951c8e4720de555d1aa2d9050df2",
             "version":1
         }
     }
@@ -68,6 +69,7 @@ async function imdbRequest(imdbCode, spoilers = false, pagePointer = null) {
             'Accept': 'application/graphql+json, application/json'
         }
     });
+
 
     if (response.ok) {
         const data = await response.json();
