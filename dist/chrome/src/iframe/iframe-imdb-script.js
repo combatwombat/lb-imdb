@@ -11,63 +11,34 @@ jQuery(function($) {
 
     var $base = $('main.ipc-page-wrapper');
 
-    var buttons = {
-        'all' : {
-                'class'     : 'chained-see-more-button-uncategorized',
-            'removed'   : false
-        },
-        'seeMore' : {
-            'class'     : 'single-page-see-more-button-uncategorized',
-            'removed'   : false
-        }
-    };
-
-    buttons.all.selector = "." + buttons.all.class + ' button';
-    buttons.seeMore.selector = "." + buttons.seeMore.class + ' button';
-
-    console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-    console.log($(buttons.all.selector).length);
-
-
-    // do we have hidden non-spoiler items?
-    if ($(buttons.all.selector).length) {
-        //$(buttons.all.selector).trigger("click");
-    } else {
-        buttons.all.removed = true;
-    }
-
-
-    // also show spoilers if they exist (instant)
+    // show spoilers if they exist (instant)
     $('.splr_show button').trigger("click");
 
-    // do we have hidden spoiler items?
-    if ($(buttons.seeMore.selector).length) {
-        //$(buttons.seeMore.selector).trigger("click");
-    } else {
-        buttons.seeMore.removed = true;
-    }
+    var $paginationContainer = $('.pagination-container');
 
-    console.log("hiiiiier");
+    var allButtonSelector = '.chained-see-more-button-uncategorized button';
+    var moreButtonSelector = '.chained-see-more-button-uncategorized button';
 
-    console.log(buttons);
+    // click on all "All" buttons if they exist. otherwise click on "x more" button
+    $paginationContainer.each(function() {
+
+        $allButton = $paginationContainer.find(allButtonSelector);
+        $moreButton = $paginationContainer.find(moreButtonSelector);
+
+        if ($allButton.length) {
+            $allButton.trigger("click");
+
+        } else if ($moreButton.length) {
+            $moreButton.trigger("click");
+        }
+    });
 
 
     // buttons get removed once the trivia has loaded. check for that, then parse the data
     var observer = new MutationObserver(function(mutationsList, observer) {
-        console.log("got some mutations: ", mutationsList);
 
         // are the buttons removed? don't look at mutationsList, since the classes seem to be randomized, harder to get the correct elements
-        if (!$(buttons.all.selector).length) {
-            buttons.all.removed = true;
-            console.log("all button gone!!!!!!!!!!!!!!");
-        } else {
-            console.log("all button still exists ", $(buttons.all.selector));
-        }
-        if (!$(buttons.seeMore.selector).length) {
-            buttons.seeMore.removed = true;
-        }
-
-        if (buttons.all.removed && buttons.seeMore.removed) {
+        if (!$('.pagination-container').length) {
             observer.disconnect();
             parseTrivia();
         }
@@ -75,7 +46,7 @@ jQuery(function($) {
     });
 
     // do we have "load more" buttons? if so, listen for changes, then parse trivia. if not, parse trivia
-    if (!buttons.all.removed || !buttons.seeMore.removed) {
+    if ($paginationContainer.length) {
         observer.observe($base[0], {
             childList: true,
             subtree: true
@@ -84,45 +55,57 @@ jQuery(function($) {
         parseTrivia();
     }
 
-    setTimeout(parseTrivia, 10000);
-
-
     function parseTrivia() {
-        console.log("parsing trivia");
+        var categories = {};
+        var numItems = 0;
 
-        var nonSpoilerItems = [];
-        var spoilerItems = [];
+        // get the different categories (uncategorized, cameo, ...), each with spoilers and non-spoilers
+        $('div[data-testid^="sub-section-"]').each(function() {
+            var $section = $(this);
 
-        $('div[data-testid="sub-section-uncategorized"] .ipc-list-card .ipc-html-content-inner-div').each(function() {
-            nonSpoilerItems.push($(this).html());
+            // for example ["uncategorized"], ["uncategorized", "spoilers], ["cameo"], ["cameo", "spoilers]
+            var sectionTypeArr = $section.attr("data-testid").substring(12).split("--");
+            var sectionId = sectionTypeArr[0];
+
+            if (sectionTypeArr.length) {
+
+                var isSpoiler = sectionTypeArr.length === 2;
+
+                // category doesn't exist yet? create it
+                if (!categories[sectionId]) {
+                    categories[sectionId] = {
+                        "category": "Uncategorized",
+                        "nonSpoilerItems": [],
+                        "spoilerItems": []
+                    }
+                }
+
+                // get proper name of category if it's not "uncategorized"
+                if (sectionId !== "uncategorized" && !isSpoiler) {
+                    var name = $section.prev().find('.ipc-title__text').text();
+                    if (name) {
+                        categories[sectionId].category = name;
+                    }
+                }
+
+                var items = [];
+                $section.find(".ipc-list-card .ipc-html-content-inner-div").each(function() {
+                    items.push($(this).html());
+                    numItems++;
+                });
+
+                if (isSpoiler) {
+                    categories[sectionId].spoilerItems = items;
+                } else {
+                    categories[sectionId].nonSpoilerItems = items;
+                }
+            }
+
         });
-        nonSpoilerItems = removeDuplicates(nonSpoilerItems);
 
-        $('div[data-testid="sub-section-uncategorized--spoilers"] .ipc-list-card .ipc-html-content-inner-div').each(function() {
-            spoilerItems.push($(this).html());
-        });
-        spoilerItems = removeDuplicates(spoilerItems);
-
-        console.log("got " + nonSpoilerItems.length + " items and " + spoilerItems.length + " spoilers");
-
-        var c = 0;
-        for (var i in nonSpoilerItems) {
-            console.log(c + " " + nonSpoilerItems[i]);
-            c++;
-        }
-        console.log("count: ", c);
-
+        // send categories up the chain to the outer iframe, see iframe-script.js
+        window.parent.postMessage({"lb_imdb" : {categories: categories, numItems: numItems}}, "*");
     }
-
-    function removeDuplicates(arr) {
-        return arr.filter((item, index) => {
-            return arr.indexOf(item) === index;
-        });
-    }
-
-    var title = $('h2[data-testid="subtitle"]').text();
-
-    window.parent.postMessage({"lb_imdb" : title}, "*");
 
 
 })

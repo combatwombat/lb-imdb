@@ -13,31 +13,47 @@ browser.storage.local.get(null, function(op) {
     init();
 });
 
+var imdbCode;
 
 function init() {
     var imdbLink = $('a[data-track-action="IMDb"]').attr('href');
     if (typeof imdbLink !== 'undefined') {
         var rx = /title\/(.*)\/maindetails/g;
         var arr = rx.exec(imdbLink);
-        var imdbCode = arr[1];
+        imdbCode = arr[1];
         if (typeof imdbCode !== 'undefined') {
 
-            // test: insert iframe
             insertIframe(imdbCode);
 
-            browser.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBData);
+            //browser.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBData);
         }
     }
 }
 
+// insert hidden iframe with imdb trivia page
 function insertIframe(imdbCode) {
     var iframeURL = chrome.runtime.getURL('iframe/iframe.html#' + imdbCode);
-    $('.review .truncate').append('<iframe style="width:100%;height:430px;border:none;" src="'+iframeURL+'"></iframe>');
+    $('.review .truncate').append('<iframe id="lb-imdb-iframe" style="display: none;" aria-hidden="true" src="' + iframeURL + '"></iframe>');
 }
 
 window.addEventListener('message', function(event) {
 
-    console.log("in content.js. received message: ", event.data);
+    // is it a message from our code inside the outer iframe (iframe-script.js)?
+    if (typeof event.data.lb_imdb !== "undefined") {
+
+        // data invalid? show error message
+        if (typeof event.data.lb_imdb.categories === "undefined" || typeof event.data.lb_imdb.numItems === "undefined") {
+            insertFallback(imdbCode);
+        } else {
+            if (event.data.lb_imdb.numItems > 0) {
+                insertTriviaCategories(event.data.lb_imdb.categories);
+            }
+        }
+
+        // remove iframe
+        document.getElementById("lb-imdb-iframe").remove();
+    }
+
 });
 
 
@@ -166,23 +182,22 @@ function insertTriviaCategories(triviaCategories) {
 
     var triviaHTML = '';
 
+    for (let key in triviaCategories) {
 
-    triviaCategories.forEach(function(category) {
+        var category = triviaCategories[key];
 
         //// non-spoilers
         if (category.nonSpoilerItems.length === 0) {
             return;
         }
         triviaHTML += '<div class="trivia-list">';
-        if (category.category !== "Uncategorized") {
+        if (key !== "uncategorized") {
             triviaHTML += '<h4>' + escapeHTML(category.category) + '</h4>';
         }
 
         triviaHTML += '<ul>';
-        var c = 0;
         category.nonSpoilerItems.forEach(function(item) {
-            triviaHTML += '<li>' + c + " " + escapeHTML(replaceLinks(item.html)) + '</li>';
-            c++;
+            triviaHTML += '<li>' + " " + escapeHTML(replaceLinks(item)) + '</li>';
         });
         triviaHTML += '</ul>';
 
@@ -190,9 +205,10 @@ function insertTriviaCategories(triviaCategories) {
 
         //// spoilers
         if (!category.spoilerItems || category.spoilerItems.length === 0) {
-            return;
+            continue;
         }
-        cssClass = ' spoiler';
+
+        let cssClass = ' spoiler';
         if (options.hideSpoilers) {
             cssClass += " hidden-list";
         }
@@ -210,7 +226,7 @@ function insertTriviaCategories(triviaCategories) {
 
         triviaHTML += '<ul>';
         category.spoilerItems.forEach(function(item) {
-            triviaHTML += '<li>' + escapeHTML(replaceLinks(item.html)) + '</li>';
+            triviaHTML += '<li>' + escapeHTML(replaceLinks(item)) + '</li>';
         });
         triviaHTML += '</ul>';
 
@@ -220,10 +236,12 @@ function insertTriviaCategories(triviaCategories) {
         triviaHTML += ' Go to <a href="#" class="open-lb-imdb-options">Letterboxd IMDb Trivia Options</a></div>';
 
         triviaHTML += '</div>';
-    });
+    }
 
-    var $newTabContent = $('<div id="tab-trivia" class="tabbed-content-block" style="display: none;">' + triviaHTML + '</div>');
+    let $newTabContent = $('<div id="tab-trivia" class="tabbed-content-block" style="display: none;">' + triviaHTML + '</div>');
     $newTabContent.appendTo($tabsWrap);
+
+
 
     // re-init letterboxd js to recognize new tab
     injectCode(browser.runtime.getURL('/js/reload-letterboxd.js'));
