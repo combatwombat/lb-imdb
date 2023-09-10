@@ -22,10 +22,7 @@ function init() {
         var arr = rx.exec(imdbLink);
         imdbCode = arr[1];
         if (typeof imdbCode !== 'undefined') {
-
             insertIframe(imdbCode);
-
-            //browser.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBData);
         }
     }
 }
@@ -55,77 +52,6 @@ window.addEventListener('message', function(event) {
 
 });
 
-
-function gotIMDBData(data) {
-
-    if (data.nonSpoilerItems.length > 0 || data.spoilerItems.length > 0) {
-        var triviaCategories = getTriviaCategoriesFromData(data);
-        if (triviaCategories.length > 0) {
-            insertTriviaCategories(triviaCategories);
-        }
-    } else {
-        insertFallback(data.imdbCode);
-    }
-}
-
-
-/**
- * Get array of trivia html, grouped by category, with spoilers and non-spoilers
- * [
- *  {
- *     "category": "Uncategorized",
- *     "spoilerItems": [html, html, html, ...]
- *     "nonSpoilerItems": [html, html, html, ...]
- *  },
- *  {
- *     "category": "Cameo",
- *     "spoilerItems": [html, html, html, ...]
- *     "nonSpoilerItems": [html, html, html, ...]
- *  },
- *  ...
- * ]
- * @param {string} imdbCode
- * @param {function} done
- */
-function getTriviaCategoriesFromData(data) {
-    let categories = [];
-
-    processItems(data.nonSpoilerItems, 'nonSpoilerItems', categories);
-    processItems(data.spoilerItems, 'spoilerItems', categories);
-
-    return categories;
-}
-
-/**
- * Extract trivia and categories from data
- * @param items
- * @param itemType
- * @param categories
- */
-function processItems(items, itemType, categories) {
-    items.forEach(function(item) {
-        let category = item.node.category.text;
-
-        let triviaItem = {
-            'html' : item.node.displayableArticle.body.plaidHtml,
-            'usersVoted': item.node.interestScore.usersVoted,
-            'usersInterested': item.node.interestScore.usersInterested
-        }
-
-        let existingCategory = categories.find(cat => cat.category === category);
-        if (existingCategory) {
-            if (!Array.isArray(existingCategory[itemType])) {
-                existingCategory[itemType] = [];
-            }
-            existingCategory[itemType].push(triviaItem);
-        } else {
-            categories.push({
-                'category': category,
-                [itemType]: [triviaItem]
-            });
-        }
-    });
-}
 
 // thx to stackbykumbi https://stackoverflow.com/a/69361046/1191375
 function nullthrows(v) {
