@@ -21,11 +21,24 @@ function init() {
         var arr = rx.exec(imdbLink);
         var imdbCode = arr[1];
         if (typeof imdbCode !== 'undefined') {
+
+            // test: insert iframe
+            insertIframe(imdbCode);
+
             browser.runtime.sendMessage({imdbCode: imdbCode}, gotIMDBData);
         }
     }
 }
 
+function insertIframe(imdbCode) {
+    var iframeURL = chrome.runtime.getURL('iframe/iframe.html#' + imdbCode);
+    $('.review .truncate').append('<iframe style="width:100%;height:430px;border:none;" src="'+iframeURL+'"></iframe>');
+}
+
+window.addEventListener('message', function(event) {
+
+    console.log("in content.js. received message: ", event.data);
+});
 
 
 function gotIMDBData(data) {
@@ -39,6 +52,7 @@ function gotIMDBData(data) {
         insertFallback(data.imdbCode);
     }
 }
+
 
 /**
  * Get array of trivia html, grouped by category, with spoilers and non-spoilers
@@ -165,8 +179,10 @@ function insertTriviaCategories(triviaCategories) {
         }
 
         triviaHTML += '<ul>';
+        var c = 0;
         category.nonSpoilerItems.forEach(function(item) {
-            triviaHTML += '<li>' + escapeHTML(replaceLinks(item.html)) + '</li>';
+            triviaHTML += '<li>' + c + " " + escapeHTML(replaceLinks(item.html)) + '</li>';
+            c++;
         });
         triviaHTML += '</ul>';
 

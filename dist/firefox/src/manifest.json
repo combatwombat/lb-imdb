@@ -12,7 +12,8 @@
   ],
   "web_accessible_resources": [
     "js/reload-letterboxd.js",
-    "img/*.png"
+    "img/*.png",
+    "iframe/*"
   ],
   "background": {
     "scripts": ["js/background.js"]
@@ -21,7 +22,8 @@
     "https://letterboxd.com/film/*",
     "https://www.imdb.com/*",
     "https://caching.graphql.imdb.com/*",
-    "storage"
+    "storage",
+    "declarativeNetRequestWithHostAccess"
   ],
   "icons" : {
     "16" : "img/icon-16.png",
