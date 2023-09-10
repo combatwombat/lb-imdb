@@ -34,7 +34,6 @@ browser.runtime.onInstalled.addListener(() => {
 // strip headers, for Firefox Manifest v2
 if (typeof browser.webRequest !== "undefined" && typeof browser.webRequest.onHeadersReceived !== "undefined") {
     function stripHeaders(response) {
-        console.log("stripping headers. respone: ", response);
         let headers = response.responseHeaders.filter(header => {
             let name = header.name.toLowerCase();
             return name !== 'x-frame-options' && name !== 'frame-options' && name !== 'content-security-policy';
