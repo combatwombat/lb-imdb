@@ -32,8 +32,7 @@ function init() {
 
 // insert hidden iframe with imdb trivia page
 function insertIframe(imdbCode) {
-    var iframeURL = chrome.runtime.getURL('iframe/iframe.html#' + imdbCode);
-    $('.review .truncate').append('<iframe id="lb-imdb-iframe" style="display: none;" aria-hidden="true" src="' + iframeURL + '"></iframe>');
+    $('.review .truncate').append('<iframe id="lb-imdb-iframe" style="display: none;" aria-hidden="true" src="https://www.imdb.com/title/'+imdbCode+'/trivia/?ref_=tt_trv_trv"></iframe>');
 }
 
 window.addEventListener('message', function(event) {
@@ -267,7 +266,7 @@ function insertFallback(imdbCode) {
     var $newTab = $('<li><a href="'+basePath+'" data-id="trivia">Trivia</a></li>');
     $newTab.appendTo($tabsListWrap);
 
-    var iconSrc = chrome.runtime.getURL("img/icon-external-link-line-32.png");
+    var iconSrc = browser.runtime.getURL("img/icon-external-link-line-32.png");
 
     var triviaHTML = '<div class="lb-imdb-fallback"><p><em>Error fetching IMDb trivia. Might be fixed soon. Meanwhile:</em></p><p><a class="lb-imdb-button" href="https://www.imdb.com/title/'+imdbCode+'/trivia" target="_blank">Go to IMDb trivia page <img src="'+iconSrc+'"></a></p></div>';
 

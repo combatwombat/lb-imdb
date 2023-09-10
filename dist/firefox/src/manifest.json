@@ -29,7 +29,9 @@
     "https://www.imdb.com/*",
     "https://caching.graphql.imdb.com/*",
     "storage",
-    "declarativeNetRequestWithHostAccess"
+    "declarativeNetRequestWithHostAccess",
+    "webRequest",
+    "webRequestBlocking"
   ],
   "icons" : {
     "16" : "img/icon-16.png",
