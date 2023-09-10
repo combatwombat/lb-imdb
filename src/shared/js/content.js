@@ -34,7 +34,7 @@ function insertIframe(imdbCode) {
 
 window.addEventListener('message', function(event) {
 
-    // is it a message from our code inside the outer iframe (iframe-script.js)?
+    // is it a message from the imdb iframe?
     if (typeof event.data.lb_imdb !== "undefined") {
 
         // data invalid? show error message
@@ -46,7 +46,6 @@ window.addEventListener('message', function(event) {
             }
         }
 
-        // remove iframe
         document.getElementById("lb-imdb-iframe").remove();
     }
 
@@ -166,8 +165,6 @@ function insertTriviaCategories(triviaCategories) {
     let $newTabContent = $('<div id="tab-trivia" class="tabbed-content-block" style="display: none;">' + triviaHTML + '</div>');
     $newTabContent.appendTo($tabsWrap);
 
-
-
     // re-init letterboxd js to recognize new tab
     injectCode(browser.runtime.getURL('/js/reload-letterboxd.js'));
 
@@ -253,4 +250,3 @@ function addTriviaEventListener() {
 
     });
 }
-
