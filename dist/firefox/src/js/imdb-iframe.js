@@ -7,7 +7,7 @@ jQuery(function($) {
 
     const $base = $('main.ipc-page-wrapper');
 
-    // show spoilers if they exist (instant)
+    // show spoilers if they exist
     $('.splr_show button').trigger("click");
 
     const $paginationContainer = $('.pagination-container');
@@ -103,6 +103,5 @@ jQuery(function($) {
         // send categories up the chain to the outer iframe, see iframe-script.js
         window.parent.postMessage({"lb_imdb" : {categories: categories, numItems: numItems}}, "*");
     }
-
 
 })

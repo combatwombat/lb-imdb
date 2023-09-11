@@ -2,7 +2,9 @@ if (typeof browser === 'undefined') {
     var browser = chrome;
 }
 
-// strip csp headers from imdb-requests, so it can be embedded as an iframe
+/**
+ * strip csp headers from imdb-requests, so it can be embedded as an iframe
+ */
 browser.runtime.onInstalled.addListener(() => {
     const RULE = {
         id: 1,
@@ -31,7 +33,9 @@ browser.runtime.onInstalled.addListener(() => {
 });
 
 
-// strip headers, for Firefox Manifest v2
+/**
+ * strip headers as well, for Firefox Manifest v2
+ */
 if (typeof browser.webRequest !== "undefined" && typeof browser.webRequest.onHeadersReceived !== "undefined") {
     function stripHeaders(response) {
         let headers = response.responseHeaders.filter(header => {
