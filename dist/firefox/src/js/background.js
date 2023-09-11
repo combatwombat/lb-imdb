@@ -55,15 +55,7 @@ if (typeof browser.webRequest !== "undefined" && typeof browser.webRequest.onHea
 
 
 browser.runtime.onMessage.addListener(function(message) {
-    switch (message.action) {
-        case "openOptionsPage":
-            openOptionsPage();
-            break;
-        default:
-            break;
+    if (message.action === "openOptionsPage") {
+        browser.runtime.openOptionsPage();
     }
 });
-
-function openOptionsPage() {
-    browser.runtime.openOptionsPage();
-}
