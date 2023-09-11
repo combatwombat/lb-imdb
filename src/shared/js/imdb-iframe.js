@@ -60,7 +60,6 @@ jQuery(function($) {
             const $section = $(this);
 
             // for example ["uncategorized"], ["uncategorized", "spoilers], ["cameo"], ["cameo", "spoilers]
-            // let's hope the data-test attributes never get removed
             const sectionTypeArr = $section.attr("data-testid").substring(12).split("--");
             const sectionId = sectionTypeArr[0];
 
