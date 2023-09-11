@@ -99,7 +99,7 @@ jQuery(function($) {
 
         });
 
-        // send categories up the chain to the outer iframe, see iframe-script.js
+        // send categories up to content.js
         window.parent.postMessage({"lb_imdb" : {categories: categories, numItems: numItems}}, "*");
     }
 
