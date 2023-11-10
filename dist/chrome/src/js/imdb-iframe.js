@@ -77,8 +77,8 @@ jQuery(function($) {
                 }
 
                 // get proper name of category if it's not "uncategorized"
-                if (sectionId !== "uncategorized" && !isSpoiler) {
-                    const name = $section.prev().find('.ipc-title__text').text();
+                if (sectionId !== "uncategorized") {
+                    const name = $section.parent().find('.ipc-title__text').text();
                     if (name) {
                         categories[sectionId].category = name;
                     }
@@ -102,5 +102,6 @@ jQuery(function($) {
         // send categories up to content.js
         window.parent.postMessage({"lb_imdb" : {categories: categories, numItems: numItems}}, "*");
     }
+    
 
 })

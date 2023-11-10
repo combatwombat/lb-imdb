@@ -145,21 +145,21 @@
             var category = triviaCategories[key];
 
             //// non-spoilers
-            if (category.nonSpoilerItems.length === 0) {
-                return;
-            }
-            triviaHTML += '<div class="trivia-list">';
-            if (key !== "uncategorized") {
-                triviaHTML += '<h4>' + escapeHTML(category.category) + '</h4>';
+            if (category.nonSpoilerItems.length > 0) {
+                triviaHTML += '<div class="trivia-list">';
+                if (key !== "uncategorized") {
+                    triviaHTML += '<h4>' + escapeHTML(category.category) + '</h4>';
+                }
+
+                triviaHTML += '<ul>';
+                category.nonSpoilerItems.forEach(function(item) {
+                    triviaHTML += '<li>' + " " + escapeHTML(replaceLinks(item)) + '</li>';
+                });
+                triviaHTML += '</ul>';
+
+                triviaHTML += '</div>';
             }
 
-            triviaHTML += '<ul>';
-            category.nonSpoilerItems.forEach(function(item) {
-                triviaHTML += '<li>' + " " + escapeHTML(replaceLinks(item)) + '</li>';
-            });
-            triviaHTML += '</ul>';
-
-            triviaHTML += '</div>';
 
             //// spoilers
             if (!category.spoilerItems || category.spoilerItems.length === 0) {
