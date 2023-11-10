@@ -102,6 +102,6 @@ jQuery(function($) {
         // send categories up to content.js
         window.parent.postMessage({"lb_imdb" : {categories: categories, numItems: numItems}}, "*");
     }
-    
+
 
 })

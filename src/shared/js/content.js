@@ -1,6 +1,7 @@
 (function() {
     let options = {};
     var imdbCode;
+    var insertedTrivia = false;
 
     if (typeof browser === 'undefined') {
         var browser = chrome;
@@ -51,7 +52,10 @@
                 insertFallback(imdbCode);
             } else {
                 if (event.data.lb_imdb.numItems > 0) {
-                    insertTriviaCategories(event.data.lb_imdb.categories);
+                    if (!insertedTrivia) {
+                        insertTriviaCategories(event.data.lb_imdb.categories);
+                        insertedTrivia = true;
+                    }
                 }
             }
 
@@ -136,6 +140,7 @@
 
         // omit "/trivia" from basepath, since letterboxd server doesn't know it
         var $newTab = $('<li><a href="'+basePath+'" data-id="trivia">Trivia</a></li>');
+
         $newTab.appendTo($tabsListWrap);
 
         var triviaHTML = '';
