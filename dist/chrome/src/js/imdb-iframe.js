@@ -10,24 +10,26 @@ jQuery(function($) {
     // show spoilers if they exist
     $('.splr_show button').trigger("click");
 
-    const $paginationContainer = $('.pagination-container');
+    let $paginationContainer;
 
     const allButtonSelector = '.chained-see-more-button-uncategorized button';
-    const moreButtonSelector = '.chained-see-more-button-uncategorized button';
+    const moreButtonSelector = '.single-page-see-more-button-uncategorized button';
 
     // click on all "All" buttons if they exist. otherwise click on "x More" button
-    $paginationContainer.each(function() {
-        $allButton = $paginationContainer.find(allButtonSelector);
-        $moreButton = $paginationContainer.find(moreButtonSelector);
+    function clickLoadMoreButtons() {
+        $paginationContainer = $('.pagination-container');
+        $paginationContainer.each(function() {
+            $allButton = $paginationContainer.find(allButtonSelector);
+            $moreButton = $paginationContainer.find(moreButtonSelector);
 
-        if ($allButton.length) {
-            $allButton.trigger("click");
-
-        } else if ($moreButton.length) {
-            $moreButton.trigger("click");
-        }
-    });
-
+            if ($allButton.length) {
+                $allButton.trigger("click");
+            } else if ($moreButton.length) {
+                $moreButton.trigger("click");
+            }
+        });
+    }
+    clickLoadMoreButtons();
 
     // buttons get removed once the trivia has loaded. check for that, then parse the data
     const observer = new MutationObserver(function(mutationsList, observer) {
@@ -39,7 +41,10 @@ jQuery(function($) {
             scrapeData();
         }
 
+        clickLoadMoreButtons();
     });
+
+
 
     // do we have "load more" buttons? if so, listen for changes, then parse trivia. if not, parse trivia
     if ($paginationContainer.length) {
@@ -62,6 +67,7 @@ jQuery(function($) {
             // for example ["uncategorized"], ["uncategorized", "spoilers], ["cameo"], ["cameo", "spoilers]
             const sectionTypeArr = $section.attr("data-testid").substring(12).split("--");
             const sectionId = sectionTypeArr[0];
+
 
             if (sectionTypeArr.length) {
 

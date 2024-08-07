@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Letterboxd IMDb Trivia",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Shows IMDb trivia on Letterboxd movie pages.",
   "minimum_chrome_version": "101",
   "content_scripts": [

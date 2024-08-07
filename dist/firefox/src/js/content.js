@@ -20,6 +20,7 @@
      * Grab IMDb code, start things
      */
     function init() {
+
         var imdbLink = $('a[data-track-action="IMDb"]').attr('href');
         if (typeof imdbLink !== 'undefined') {
             var rx = /title\/(.*)\/maindetails/g;
