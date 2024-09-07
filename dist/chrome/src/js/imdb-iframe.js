@@ -7,26 +7,18 @@ jQuery(function($) {
 
     const $base = $('main.ipc-page-wrapper');
 
+
     // show spoilers if they exist
     $('.splr_show button').trigger("click");
 
     let $paginationContainer;
 
-    const allButtonSelector = '.chained-see-more-button-uncategorized button';
-    const moreButtonSelector = '.single-page-see-more-button-uncategorized button';
 
-    // click on all "All" buttons if they exist. otherwise click on "x More" button
+    // click on all "load more" buttons
     function clickLoadMoreButtons() {
         $paginationContainer = $('.pagination-container');
         $paginationContainer.each(function() {
-            $allButton = $paginationContainer.find(allButtonSelector);
-            $moreButton = $paginationContainer.find(moreButtonSelector);
-
-            if ($allButton.length) {
-                $allButton.trigger("click");
-            } else if ($moreButton.length) {
-                $moreButton.trigger("click");
-            }
+            $paginationContainer.find('.ipc-see-more button').trigger("click");
         });
     }
     clickLoadMoreButtons();
