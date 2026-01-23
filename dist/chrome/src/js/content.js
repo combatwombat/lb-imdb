@@ -22,48 +22,42 @@
     function init() {
 
         var imdbLink = $('a[data-track-action="IMDb"]').attr('href');
+
         if (typeof imdbLink !== 'undefined') {
             var rx = /title\/(.*)\/maindetails/g;
             var arr = rx.exec(imdbLink);
             imdbCode = arr[1];
             if (typeof imdbCode !== 'undefined') {
-                insertIframe(imdbCode);
+                fetchTrivia(imdbCode);
             }
         }
     }
 
     /**
-     * insert hidden iframe with imdb trivia page
+     * Fetch trivia via background script
      * @param imdbCode "tt2332623"
      */
-    function insertIframe(imdbCode) {
-        $('.review .truncate').append('<iframe id="lb-imdb-iframe" style="display: none;" aria-hidden="true" src="https://www.imdb.com/title/'+imdbCode+'/trivia/?ref_=tt_trv_trv"></iframe>');
-    }
-
-    /**
-     * Listen to messages coming from the IMDb iframe
-     */
-    window.addEventListener('message', function(event) {
-
-        // is it a message from the imdb iframe?
-        if (typeof event.data.lb_imdb !== "undefined") {
-
-            // data invalid? show error message
-            if (typeof event.data.lb_imdb.categories === "undefined" || typeof event.data.lb_imdb.numItems === "undefined") {
-                insertFallback(imdbCode);
-            } else {
-                if (event.data.lb_imdb.numItems > 0) {
-                    if (!insertedTrivia) {
-                        insertTriviaCategories(event.data.lb_imdb.categories);
-                        insertedTrivia = true;
-                    }
+    function fetchTrivia(imdbCode) {
+        console.log('[lb-imdb] requesting trivia for', imdbCode);
+        browser.runtime.sendMessage({
+            action: "fetchTrivia",
+            imdbCode: imdbCode
+        }).then(response => {
+            console.log('[lb-imdb] got response:', response);
+            if (response.success && response.data.numItems > 0) {
+                if (!insertedTrivia) {
+                    insertTriviaCategories(response.data.categories);
+                    insertedTrivia = true;
                 }
+            } else if (!response.success) {
+                console.error("Letterboxd IMDb Trivia: Failed to fetch", response.error);
+                insertFallback(imdbCode);
             }
-
-            document.getElementById("lb-imdb-iframe").remove();
-        }
-
-    });
+        }).catch(err => {
+            console.error("Letterboxd IMDb Trivia: Failed to fetch", err);
+            insertFallback(imdbCode);
+        });
+    }
 
 
     /**
