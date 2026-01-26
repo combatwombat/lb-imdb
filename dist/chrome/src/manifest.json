@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Letterboxd IMDb Trivia",
-  "version": "1.5.5",
+  "version": "1.6.0",
   "description": "Shows IMDb trivia on Letterboxd movie pages.",
   "minimum_chrome_version": "101",
   "content_scripts": [
@@ -10,33 +10,24 @@
       "css" : ["css/styles.css"],
       "matches" : ["https://letterboxd.com/film/*"],
       "run_at" : "document_end"
-    },
-    {
-      "js": ["js/jquery-3.3.1.min.js", "js/imdb-scraper.js"],
-      "matches" : ["https://www.imdb.com/*"],
-      "run_at" : "document_end",
-      "all_frames" : true
     }
   ],
   "web_accessible_resources": [
     {
       "resources": [ "js/reload-letterboxd.js", "img/*.png" ],
       "matches": [ "https://letterboxd.com/*" ]
-    },
-    {
-      "resources": [ "js/imdb-scraper.js" ],
-      "matches": [ "https://www.imdb.com/*" ]
     }
   ],
   "background": {
     "service_worker": "js/background.js"
   },
   "permissions": [
-    "storage",
-    "tabs"
+    "storage"
   ],
   "host_permissions": [
-    "https://letterboxd.com/film/*", "https://www.imdb.com/*"
+    "https://letterboxd.com/film/*",
+    "https://www.imdb.com/*",
+    "https://caching.graphql.imdb.com/*"
   ],
   "icons" : {
     "16" : "img/icon-16.png",
