@@ -1,0 +1,12 @@
+{
+  "name": "lb-imdb-fetch-hash",
+  "version": "1.0.0",
+  "description": "Fetch IMDb GraphQL hash via headless browser",
+  "main": "fetch-hash.js",
+  "scripts": {
+    "fetch": "node fetch-hash.js"
+  },
+  "dependencies": {
+    "puppeteer": "^23.0.0"
+  }
+}
