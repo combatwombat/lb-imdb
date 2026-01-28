@@ -132,7 +132,7 @@ async function fetchTriviaWithHash(imdbCode, queryHash) {
     console.log('[lb-imdb bg] fetched', nonSpoilerItems.length, 'non-spoiler items and', spoilerItems.length, 'spoiler items');
 
     // Process into categories
-    const categories = processTriviaCate(nonSpoilerItems, spoilerItems);
+    const categories = processTriviaCategories(nonSpoilerItems, spoilerItems);
     const numItems = nonSpoilerItems.length + spoilerItems.length;
 
     return { categories, numItems };
@@ -210,7 +210,7 @@ async function fetchAllTriviaPages(imdbCode, queryHash, spoilers, pagePointer = 
 /**
  * Process trivia items into categories
  */
-function processTriviaCate(nonSpoilerItems, spoilerItems) {
+function processTriviaCategories(nonSpoilerItems, spoilerItems) {
     const categories = {};
 
     function processItems(items, itemType) {
