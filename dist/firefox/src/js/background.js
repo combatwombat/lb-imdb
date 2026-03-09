@@ -3,7 +3,7 @@ if (typeof browser === 'undefined') {
 }
 
 // Fallback hash - used if fetching from GitHub fails
-const FALLBACK_QUERY_HASH = '16fe8948f4489e0d7f45641919c9b36a7cfb29faeace1910d34f463a0efd973d';
+const FALLBACK_QUERY_HASH = '151d3d2e218d398a6a634d9fbe0e4c13c96b6cac4b7b2ec9c2c6522df30d8123';
 
 // URL to fetch current hash from GitHub Pages
 const HASH_URL = 'https://combatwombat.github.io/lb-imdb/hash.txt';
