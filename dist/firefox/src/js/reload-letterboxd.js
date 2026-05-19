@@ -1,20 +1,25 @@
 (function() {
-    var tabs = document.querySelectorAll('#tabbed-content header ul a');
+    var tabs = document.querySelectorAll('.content-tab-filters .tablist a');
     tabs.forEach(function(tab) {
         tab.addEventListener('click', function(e) {
             e.preventDefault();
-            var id = this.getAttribute('data-id');
+            var id = this.getAttribute('id').split("-")[1]; // e.g. "tab-trivia" -> "trivia"
             if (!id) return;
             // Deactivate all tabs
-            tabs.forEach(function(t) { t.parentElement.classList.remove('selected'); });
+            tabs.forEach(function(t) { t.setAttribute("aria-selected", "false"); });
             // Hide all content
-            document.querySelectorAll('#tabbed-content .tabbed-content-block').forEach(function(block) {
-                block.style.display = 'none';
+            document.querySelectorAll('.cast-crew-details-tabs > [role="tabpanel"]').forEach(function(block) {
+                block.setAttribute("hidden", "until-found");
             });
             // Activate clicked tab and show content
-            this.parentElement.classList.add('selected');
-            var target = document.getElementById('tab-' + id);
-            if (target) target.style.display = 'block';
+            this.setAttribute("aria-selected", "true");
+            var target = document.getElementById('tab-panel-' + id);
+            if (target) target.removeAttribute("hidden");
+
+            // change url without reloading page
+            var basePath = window.location.pathname.split("/").slice(0, 3).join("/") + "/";
+            var newUrl = basePath + id;
+            window.history.pushState({ path: newUrl }, '', newUrl);
         });
     });
 })();

@@ -126,15 +126,16 @@
      */
     function insertTriviaCategories(triviaCategories) {
 
-        var $tabsWrap = $('.col-main #tabbed-content');
-        var $tabsListWrap = $tabsWrap.find("header ul");
+        var $tabsWrap = $('.cast-crew-details-tabs');
+        var $tabsListWrap = $tabsWrap.find(".content-tab-filters .tablist");
 
         // get base path to movie
         var pathArr = window.location.pathname.split("/");
         var basePath = '/' + pathArr[1] + '/' + pathArr[2] + '/';
 
         // omit "/trivia" from basepath, since letterboxd server doesn't know it
-        var $newTab = $('<li><a href="'+basePath+'" data-id="trivia">Trivia</a></li>');
+        var $newTab = $('<a id="tab-trivia" class="trigger" href="' + basePath + 'trivia" role="tab"\n' +
+            '           aria-controls="tab-panel-trivia" aria-selected="false" tabIndex="-1"><span class="label">Trivia</span></a>');
 
         $newTab.appendTo($tabsListWrap);
 
@@ -152,7 +153,7 @@
                 }
 
                 triviaHTML += '<ul>';
-                category.nonSpoilerItems.forEach(function(item) {
+                category.nonSpoilerItems.forEach(function (item) {
                     triviaHTML += '<li>' + " " + escapeHTML(replaceLinks(item)) + '</li>';
                 });
                 triviaHTML += '</ul>';
@@ -183,7 +184,7 @@
             }
 
             triviaHTML += '<ul>';
-            category.spoilerItems.forEach(function(item) {
+            category.spoilerItems.forEach(function (item) {
                 triviaHTML += '<li>' + escapeHTML(replaceLinks(item)) + '</li>';
             });
             triviaHTML += '</ul>';
@@ -196,7 +197,8 @@
             triviaHTML += '</div>';
         }
 
-        let $newTabContent = $('<div id="tab-trivia" class="tabbed-content-block" style="display: none;">' + triviaHTML + '</div>');
+
+        let $newTabContent = $('<div id="tab-panel-trivia" role="tabpanel" aria-labelledby="tab-trivia" hidden="until-found">' + triviaHTML + '</div>');
         $newTabContent.appendTo($tabsWrap);
 
         // re-init letterboxd js to recognize new tab. needs to be external js file, inline <script> is frowned upon

@@ -1,24 +1,24 @@
-#tab-trivia {
+#tab-panel-trivia {
     font-size: 13px;
 }
-#tab-trivia ul li {
+#tab-panel-trivia ul li {
     border-bottom: 1px solid #2c3641;
     padding-bottom: 10px;
     margin-top: 10px;
 }
-#tab-trivia ul li:first-child {
+#tab-panel-trivia ul li:first-child {
     margin-top: 0;
 }
-#tab-trivia ul li:last-child {
+#tab-panel-trivia ul li:last-child {
     border-bottom: none;
 }
-#tab-trivia ul li a {
+#tab-panel-trivia ul li a {
     color: #fff;
 }
-#tab-trivia ul li a:hover {
+#tab-panel-trivia ul li a:hover {
     color: #40bcf4;
 }
-#tab-trivia .trivia-list h4 {
+#tab-panel-trivia .trivia-list h4 {
     color: #9ab;
     margin: 20px 0 10px 0;
     padding: 5px 0;
@@ -26,41 +26,41 @@
     text-transform: uppercase;
 }
 
-#tab-trivia .trivia-list.spoiler h4 {
+#tab-panel-trivia .trivia-list.spoiler h4 {
     color: #ee7000;
     border-color: #ee7000;
 }
 
-#tab-trivia .trivia-list.hidden-list ul {
+#tab-panel-trivia .trivia-list.hidden-list ul {
     display: none;
 }
 
-#tab-trivia .trivia-list .show-hidden-list {
+#tab-panel-trivia .trivia-list .show-hidden-list {
     display: none;
 }
-#tab-trivia .trivia-list.hidden-list .show-hidden-list {
+#tab-panel-trivia .trivia-list.hidden-list .show-hidden-list {
     display: block;
 }
 /*
-#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col {
+#tab-panel-trivia .trivia-list.hidden-list .show-hidden-list > .col {
     display: table-cell;
     vertical-align: top;
 }
-#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-left {
+#tab-panel-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-left {
     width: 160px;
 }
 
-#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right input {
+#tab-panel-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right input {
     display: inline-block;
 }
-#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right label {
+#tab-panel-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right label {
     color: #9ab;
     display: inline-block;
 }
-#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right label a {
+#tab-panel-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right label a {
     color: #fff;
 }
-#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right input[type="checkbox"] {
+#tab-panel-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right input[type="checkbox"] {
     -webkit-appearance: none;
     width: 20px;
     height: 20px;
@@ -68,7 +68,7 @@
     background: transparent;
     border-radius: 3px;
 }
-#tab-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right input[type="checkbox"]:checked {
+#tab-panel-trivia .trivia-list.hidden-list .show-hidden-list > .col.col-right input[type="checkbox"]:checked {
     background: #9ab url(data:image/svg+xml;utf8,<svg width='12' height='11' viewBox='0 0 12 11' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M1 5.19048L4.75 9L11 1' stroke='#222' stroke-width='2'/></svg>) no-repeat 3px 4px;
 }*/
 
@@ -76,7 +76,7 @@ body #tabbed-content header ul li {
     margin-right: 12px;
 }
 
-#tab-trivia .trivia-list.hidden-list .show-hidden-list .show-hidden-list-link {
+#tab-panel-trivia .trivia-list.hidden-list .show-hidden-list .show-hidden-list-link {
     display: inline-block;
     background: #283038;
     border-radius: 3px;
@@ -87,7 +87,7 @@ body #tabbed-content header ul li {
     padding: 10px 10px;
     text-transform: uppercase;
 }
-#tab-trivia .trivia-list.hidden-list .show-hidden-list .show-hidden-list-link:hover {
+#tab-panel-trivia .trivia-list.hidden-list .show-hidden-list .show-hidden-list-link:hover {
     background: #fff;
     color: #567;
 }
