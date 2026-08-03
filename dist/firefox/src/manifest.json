@@ -1,6 +1,6 @@
 {
   "name": "Letterboxd IMDb Trivia",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "description": "Shows IMDb trivia on Letterboxd movie pages.",
   "content_scripts": [
     {
@@ -22,7 +22,9 @@
     "https://www.imdb.com/*",
     "https://caching.graphql.imdb.com/*",
     "https://combatwombat.github.io/*",
-    "storage"
+    "storage",
+    "webRequest",
+    "webRequestBlocking"
   ],
   "icons" : {
     "16" : "img/icon-16.png",

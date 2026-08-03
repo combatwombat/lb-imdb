@@ -11,6 +11,28 @@ const HASH_URL = 'https://combatwombat.github.io/lb-imdb/hash.txt';
 // Storage key for cached hash
 const STORAGE_KEY = 'queryHash';
 
+const GRAPHQL_ENDPOINT = 'https://caching.graphql.imdb.com/';
+const IMDB_REFERER = 'https://www.imdb.com/';
+
+// IMDb now gates the GraphQL endpoint on two headers we can't set from plain JS:
+// without an imdb.com Referer it answers 403, and without a real
+// "Content-Type: application/json" it answers 415. Referer is a forbidden header
+// for fetch(), and browsers drop Content-Type from a body-less GET - so we POST
+// (which gives us a genuine Content-Type) and set the Referer at the network layer.
+// Chrome (MV3) does that with the declarative_net_request ruleset in rules.json;
+// Firefox (MV2) needs the blocking webRequest listener below.
+if (typeof browser !== 'undefined' && browser.webRequest?.onBeforeSendHeaders) {
+    browser.webRequest.onBeforeSendHeaders.addListener(
+        details => {
+            const headers = details.requestHeaders.filter(h => h.name.toLowerCase() !== 'referer');
+            headers.push({ name: 'Referer', value: IMDB_REFERER });
+            return { requestHeaders: headers };
+        },
+        { urls: [GRAPHQL_ENDPOINT + '*'] },
+        ['blocking', 'requestHeaders']
+    );
+}
+
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log('[lb-imdb bg] received message:', message);
 
@@ -165,15 +187,17 @@ async function fetchAllTriviaPages(imdbCode, queryHash, spoilers, pagePointer = 
         }
     };
 
-    let url = 'https://caching.graphql.imdb.com/?operationName=TitleTriviaPagination';
-    url += '&variables=' + encodeURIComponent(JSON.stringify(variables));
-    url += '&extensions=' + encodeURIComponent(JSON.stringify(extensions));
-
-    const response = await fetch(url, {
+    const response = await fetch(GRAPHQL_ENDPOINT, {
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/graphql+json, application/json'
-        }
+        },
+        body: JSON.stringify({
+            operationName: 'TitleTriviaPagination',
+            variables: variables,
+            extensions: extensions
+        })
     });
 
     if (!response.ok) {
