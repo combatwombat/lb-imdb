@@ -3,7 +3,7 @@ if (typeof browser === 'undefined') {
 }
 
 // Fallback hash - used if fetching from GitHub fails
-const FALLBACK_QUERY_HASH = '151d3d2e218d398a6a634d9fbe0e4c13c96b6cac4b7b2ec9c2c6522df30d8123';
+const FALLBACK_QUERY_HASH = '1986bb7212d96dd5826ea3533fbada409029b2158ae4d878e9cfb5818f0b3b33';
 
 // URL to fetch current hash from GitHub Pages
 const HASH_URL = 'https://combatwombat.github.io/lb-imdb/hash.txt';
@@ -80,7 +80,9 @@ async function getQueryHash(forceRefresh = false) {
     // Fetch from GitHub Pages
     try {
         console.log('[lb-imdb bg] fetching hash from:', HASH_URL);
-        const response = await fetch(HASH_URL);
+        // GitHub Pages serves hash.txt with max-age=600. After a rotation we must
+        // not be handed the stale copy from the HTTP cache, so bypass it.
+        const response = await fetch(HASH_URL, { cache: 'no-store' });
         if (response.ok) {
             const hash = (await response.text()).trim();
             if (hash && hash.length === 64) { // SHA-256 is 64 hex chars
@@ -126,10 +128,11 @@ async function fetchTriviaViaGraphQL(imdbCode) {
         if (err.message.includes('PersistedQueryNotFound')) {
             console.log('[lb-imdb bg] hash invalid, fetching fresh hash...');
             await clearCachedHash();
+            const failedHash = queryHash;
             queryHash = await getQueryHash(true); // Force refresh
 
-            // If we got the same hash back, it's still invalid - give up
-            if (queryHash === FALLBACK_QUERY_HASH) {
+            // If we got the same hash back, GitHub has nothing newer yet - give up
+            if (queryHash === failedHash) {
                 throw new Error('Could not fetch trivia: hash is outdated');
             }
 
