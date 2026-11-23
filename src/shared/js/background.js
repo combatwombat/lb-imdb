@@ -21,6 +21,13 @@ const IMDB_REFERER = 'https://www.imdb.com/';
 // (which gives us a genuine Content-Type) and set the Referer at the network layer.
 // Chrome (MV3) does that with the declarative_net_request ruleset in rules.json;
 // Firefox (MV2) needs the blocking webRequest listener below.
+//
+// Since Nov 2026 IMDb's CloudFront edge also 403s any request without an
+// x-imdb-client-name header (any value passes - it's a presence check). That one
+// is a normal header, so fetch() sets it directly. We identify ourselves honestly;
+// if IMDb ever starts filtering on the value, IMDb's own is "imdb-web-next-localized".
+const IMDB_CLIENT_NAME = 'lb-imdb';
+
 if (typeof browser !== 'undefined' && browser.webRequest?.onBeforeSendHeaders) {
     browser.webRequest.onBeforeSendHeaders.addListener(
         details => {
@@ -194,7 +201,8 @@ async function fetchAllTriviaPages(imdbCode, queryHash, spoilers, pagePointer = 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/graphql+json, application/json'
+            'Accept': 'application/graphql+json, application/json',
+            'x-imdb-client-name': IMDB_CLIENT_NAME
         },
         body: JSON.stringify({
             operationName: 'TitleTriviaPagination',
